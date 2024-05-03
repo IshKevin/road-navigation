@@ -1,0 +1,19 @@
+.header {
+  background-color: #3ec8d8;
+  color: white;
+  padding: 10px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.route-info {
+  text-align: right;
+}
+
+.route-title {
+  font-weight: bold;
+}
