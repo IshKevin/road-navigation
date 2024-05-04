@@ -146,7 +146,7 @@ const Map = () => {
 
   const mapContainerStyle = {
     width: '100vw',
-    height: '82vh',
+    height: '88vh',
   };
 
   useEffect(() => {
