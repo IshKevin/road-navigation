@@ -1,5 +1,6 @@
 .header {
-  background-color: #3ec8d8;
+  background: rgb(100,222,207);
+  background: linear-gradient(90deg, rgba(100,222,207,1) 0%, rgba(126,217,98,1) 60%);
   color: white;
   padding: 10px;
 }
@@ -10,10 +11,4 @@
   align-items: center;
 }
 
-.route-info {
-  text-align: right;
-}
 
-.route-title {
-  font-weight: bold;
-}
