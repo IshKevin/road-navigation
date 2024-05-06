@@ -5,17 +5,15 @@ const Map = () => {
   const [directions, setDirections] = useState(null);
   const [currentStopIndex, setCurrentStopIndex] = useState(0);
   const mapRef = useRef(null);
-
-  const startingPoint = { lat: -1.939826787816454, lng: 30.0445426438232 }; // Nyabugogo
+  const startingPoint = { lat: -1.939826787816454, lng: 30.0445426438232 };
   const stops = [
-    { lat: -1.9355377074007851, lng: 30.060163829002217 }, // Stop A
-    { lat: -1.9358808342336546, lng: 30.08024820994666 }, // Stop B
-    { lat: -1.9489196023037583, lng: 30.092607828989397 }, // Stop C
-    { lat: -1.9592132952818164, lng: 30.106684061788073 }, // Stop D
-    { lat: -1.9487480402200394, lng: 30.126596781356923 }, // Stop E
+    { lat: -1.9355377074007851, lng: 30.060163829002217 },
+    { lat: -1.9358808342336546, lng: 30.08024820994666 },
+    { lat: -1.9489196023037583, lng: 30.092607828989397 },
+    { lat: -1.9592132952818164, lng: 30.106684061788073 },
+    { lat: -1.9487480402200394, lng: 30.126596781356923 },
   ];
-  const destination = { lat: -1.9365670876910166, lng: 30.13020167024439 }; // Kimironko
-
+  const destination = { lat: -1.9365670876910166, lng: 30.13020167024439 };
   const mapContainerStyle = {
     width: '100%',
     height: '88vh',
@@ -31,27 +29,31 @@ const Map = () => {
     mapRef.current = map;
   };
 
-  useEffect(() => {
-  const interval = setInterval(() => {
-    setCurrentStopIndex((prevStopIndex) => {
-      if (prevStopIndex < stops.length - 1) {
-        return prevStopIndex + 1;
-      } else {
-        clearInterval(interval);
-        return prevStopIndex;
-      }
-    });
-  }, 5000); // Change the interval (in milliseconds) as desired
+  const [directionsRequested, setDirectionsRequested] = useState(false);
 
-  return () => clearInterval(interval);
-}, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStopIndex((prevStopIndex) => {
+        if (prevStopIndex < stops.length - 1) {
+          return prevStopIndex + 1;
+        } else {
+          clearInterval(interval);
+          return prevStopIndex;
+        }
+      });
+    }, 5000);
+
+    setDirectionsRequested(true); // Request directions on component mount
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div style={{ position: 'relative' }}>
       <div className="route-info" style={{ position: 'absolute', top: 20, left: 20 }}>
         <div className="route-title">Nyabugogo - Kimironko</div>
         <div className="route-details">
-          Next stop: {stops[currentStopIndex]?.name || 'Kimironko'} | Distance: {/* Add distance logic */} km | Time: {/* Add time logic */} minutes
+          Next stop: {stops[currentStopIndex]?.name || 'Kimironko'} | Distance: 23 km | Time: 23 minutes
         </div>
       </div>
       <GoogleMap
@@ -60,18 +62,21 @@ const Map = () => {
         zoom={14}
         onLoad={onMapLoad}
       >
-        <DirectionsService
-          options={{
-            origin: startingPoint,
-            destination,
-            waypoints: stops.map((stop) => ({
-              location: stop,
-              stopover: true,
-            })),
-            travelMode: 'DRIVING',
-          }}
-          callback={directionsCallback}
-        />
+        {directionsRequested && (
+          <DirectionsService
+            options={{
+              origin: startingPoint,
+              destination,
+              waypoints: stops.map((stop) => ({
+                location: stop,
+                stopover: true,
+              })),
+              travelMode: 'DRIVING',
+              optimizeWaypoints: true,
+            }}
+            callback={directionsCallback}
+          />
+        )}
         {directions && <DirectionsRenderer directions={directions} />}
         <Marker position={startingPoint} />
         {stops.map((stop, index) => (
@@ -81,6 +86,7 @@ const Map = () => {
             icon={index === currentStopIndex ? '/current-stop-marker.png' : '/stop-marker.png'}
           />
         ))}
+        <Marker position={destination} />
       </GoogleMap>
     </div>
   );
